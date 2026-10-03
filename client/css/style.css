@@ -1,0 +1,1002 @@
+/* style.css
+   ออกแบบแบบ mobile-first (เขียนสำหรับจอเล็กก่อน แล้วขยายด้วย media query สำหรับจอใหญ่)
+
+   ธีม: "วงไพ่ป๊อกเด้งยามค่ำคืน" — แดงเลือดหมู่-ทอง หรูขึ้น มีมิติ
+   Palette (ห้ามใช้สีอื่นแทนความหมายนี้):
+   - #1A0A0D พื้นหลังหลัก (vignette เกือบดำอมแดง)
+   - #7A1220 → #4A0C15 พื้นโต๊ะ (gradient สว่างกึ่งกลาง เข้มขึ้นที่ขอบ)
+   - #3A0F16 พื้นกล่องเนื้อหา/badge (แดงเลือดหมู่เข้ม เข้มกว่าโต๊ะเล็กน้อย)
+   - #E8C468 ทอง — ปุ่มหลัก, ไฮไลต์คนที่กำลังคิด, กรอบโต๊ะ, เหรียญเงิน
+   - #E8552F แดงส้ม — ใช้เฉพาะโมเมนต์ "ป๊อก" เท่านั้น ห้ามใช้ที่อื่นเพื่อให้ยังคงพิเศษ
+   - #F5EFE0 สีตัวการ์ด/ตัวหนังสือบนพื้นเข้ม
+
+   หมายเหตุ: ไฟล์นี้มีแต่ style "นิ่ง" (สี, ขนาด, โครงสร้าง 3D flip, ตำแหน่ง pseudo-element)
+   ส่วน @keyframes และ class ที่ทำ animation ทั้งหมดอยู่แยกใน animations.css
+*/
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Sarabun", "Segoe UI", sans-serif;
+  background: radial-gradient(ellipse at center, #2a1015 0%, #1a0a0d 70%);
+  color: #f5efe0;
+  min-height: 100vh;
+}
+
+.screen {
+  padding: 16px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.hidden {
+  display: none !important;
+}
+
+h1, h2 {
+  font-family: "Kanit", "Sarabun", sans-serif;
+  font-weight: 700;
+}
+
+h1 {
+  text-align: center;
+  font-size: 1.7rem;
+  color: #e8c468;
+}
+
+h2 {
+  font-size: 1.15rem;
+  margin-bottom: 8px;
+}
+
+/* ---------- Lobby / Connect / Room list ---------- */
+
+.lobby-card {
+  background: #3a0f16;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border: 1px solid rgba(232, 196, 104, 0.2);
+}
+
+.lobby-card label {
+  font-size: 0.9rem;
+  margin-top: 8px;
+}
+
+.lobby-card input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  font-size: 1rem;
+  font-family: inherit;
+  background: #24080d;
+  color: #f5efe0;
+}
+
+.lobby-card input:focus {
+  outline: none;
+  border-color: #e8c468;
+}
+
+.lobby-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.error-text {
+  color: #e8552f;
+  min-height: 1.2em;
+}
+
+.room-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 12px 0;
+}
+
+.room-list-empty {
+  text-align: center;
+  opacity: 0.7;
+  padding: 24px 0;
+}
+
+.room-card {
+  background: #3a0f16;
+  border: 1px solid rgba(232, 196, 104, 0.25);
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.room-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.room-card-name {
+  font-family: "Kanit", "Sarabun", sans-serif;
+  font-weight: 700;
+}
+
+.room-card-meta {
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+
+/* ---------- ปุ่มทั่วไป ---------- */
+/* ปุ่มทุกปุ่มต้องกดง่ายด้วยนิ้วโป้งบนมือถือ จึงกำหนด min-height/min-width ไว้ที่ 44px ตามมาตรฐาน touch target */
+
+.btn {
+  padding: 12px 16px;
+  min-height: 44px;
+  min-width: 44px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: "Kanit", "Sarabun", sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+  /* scale เป็น transform ล้วนๆ จึงปลอดภัยตามข้อกำหนด animate เฉพาะ transform/opacity */
+  transition: transform 0.1s ease, filter 0.15s ease;
+}
+
+.btn:hover {
+  filter: brightness(1.08);
+}
+
+.btn:active {
+  transform: scale(0.96);
+}
+
+.btn-primary {
+  background: #e8c468;
+  color: #1a1a1a;
+}
+
+.btn-secondary {
+  background: #5a2233;
+  color: #f5efe0;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: none;
+  transform: none;
+}
+
+/* ---------- Game screen ---------- */
+
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+/* ---------- โต๊ะวงกลม ----------
+   .table-oval คือกรอบวงรีนิ่งๆ (ไม่มี animation) ที่นั่งแต่ละคนวางด้วย % ตายตัวตาม .seat-count-N
+   seat-1 fix ที่ล่างกึ่งกลางเสมอ = ตัวเอง (ui.js หมุน array ให้ตัวเองมาอยู่ตำแหน่งนี้ก่อน render)
+   ที่นั่งอื่นกระจายรอบวงรีตามสูตร: ศูนย์กลาง (50%,50%), Rx=42%, Ry=38%, มุม 280° เว้นรอบล่างไว้ */
+
+.table-oval {
+  position: relative;
+  width: 100%;
+  max-width: 700px;
+  height: 320px;
+  margin: 0 auto 16px;
+  background:
+    repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.05) 0 2px, transparent 2px 6px),
+    radial-gradient(ellipse at center, #7a1220 0%, #4a0c15 100%);
+  border-radius: 50%;
+  border: 6px solid #d4af37;
+  box-shadow:
+    inset 0 0 30px rgba(0, 0, 0, 0.55),
+    inset 0 0 3px rgba(255, 226, 150, 0.4),
+    0 6px 18px rgba(0, 0, 0, 0.6);
+}
+
+.table-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.bet-pile {
+  background: #e8c468;
+  color: #1a1a1a;
+  font-family: "Kanit", "Sarabun", sans-serif;
+  font-weight: 700;
+  font-size: 0.8rem;
+  padding: 4px 8px;
+  border-radius: 999px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.seat {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+.table-oval .seat-1 {
+  top: 88%;
+  left: 50%;
+}
+
+.seat-count-3 .seat-2 { top: 12.0%; left: 50.0%; }
+.seat-count-3 .seat-3 { top: 79.1%; left: 23.0%; }
+
+.seat-count-4 .seat-2 { top: 23.9%; left: 80.5%; }
+.seat-count-4 .seat-3 { top: 23.9%; left: 19.5%; }
+.seat-count-4 .seat-4 { top: 79.1%; left: 23.0%; }
+
+.seat-count-5 .seat-2 { top: 37.0%; left: 89.5%; }
+.seat-count-5 .seat-3 { top: 12.0%; left: 50.0%; }
+.seat-count-5 .seat-4 { top: 37.0%; left: 10.5%; }
+.seat-count-5 .seat-5 { top: 79.1%; left: 23.0%; }
+
+.seat-count-6 .seat-2 { top: 46.0%; left: 91.8%; }
+.seat-count-6 .seat-3 { top: 16.4%; left: 69.7%; }
+.seat-count-6 .seat-4 { top: 16.4%; left: 30.3%; }
+.seat-count-6 .seat-5 { top: 46.0%; left: 8.2%; }
+.seat-count-6 .seat-6 { top: 79.1%; left: 23.0%; }
+
+.seat-count-7 .seat-2 { top: 52.2%; left: 91.9%; }
+.seat-count-7 .seat-3 { top: 23.9%; left: 80.5%; }
+.seat-count-7 .seat-4 { top: 12.0%; left: 50.0%; }
+.seat-count-7 .seat-5 { top: 23.9%; left: 19.5%; }
+.seat-count-7 .seat-6 { top: 52.2%; left: 8.1%; }
+.seat-count-7 .seat-7 { top: 79.1%; left: 23.0%; }
+
+.seat-count-8 .seat-2 { top: 56.6%; left: 91.4%; }
+.seat-count-8 .seat-3 { top: 31.0%; left: 86.4%; }
+.seat-count-8 .seat-4 { top: 14.3%; left: 64.4%; }
+.seat-count-8 .seat-5 { top: 14.3%; left: 35.6%; }
+.seat-count-8 .seat-6 { top: 31.0%; left: 13.6%; }
+.seat-count-8 .seat-7 { top: 56.6%; left: 8.6%; }
+.seat-count-8 .seat-8 { top: 79.1%; left: 23.0%; }
+
+.player-badge {
+  /* position: relative จำเป็นเพื่อให้ ::after (แสงเรือง) และ ::before (badge เจ้ามือ) วางอ้างอิงกับกล่องนี้ได้ */
+  position: relative;
+  background: #3a0f16;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 90px;
+}
+
+.player-badge.is-dealer {
+  border: 2px solid #e8c468;
+}
+
+/* badge "D" เล็กมุมขวาบน บอกว่าที่นั่งนี้คือเจ้ามือ (static ไม่มี animation) */
+.player-badge.is-dealer::before {
+  content: "D";
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #e8c468;
+  color: #1a1a1a;
+  font-family: "Kanit", "Sarabun", sans-serif;
+  font-weight: 800;
+  font-size: 0.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.player-badge.status-out_of_money {
+  opacity: 0.45;
+  filter: grayscale(0.6);
+}
+
+.player-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Kanit", "Sarabun", sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #f5efe0;
+  margin-bottom: 4px;
+}
+
+.player-balance {
+  font-size: 0.75rem;
+  color: #e8c468;
+  margin-top: 2px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+/* กรอบแสงเรืองของ badge (ตาที่กำลังคิด / ตอนป๊อก) เป็น pseudo-element แยก
+   ตัว box-shadow เป็นค่า "นิ่ง" ไม่ขยับ — ที่ขยับได้จริงคือ opacity ของ pseudo-element นี้เท่านั้น
+   (ดู @keyframes glow-pulse ใน animations.css) วิธีนี้ทำให้แสงเรืองเป็น glow ได้โดยไม่แตะ box-shadow ตรงๆ */
+.player-badge::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 10px;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.player-badge.is-turn::after {
+  box-shadow: 0 0 14px 3px rgba(232, 196, 104, 0.9);
+}
+
+.player-badge.is-pok::after {
+  box-shadow: 0 0 16px 4px rgba(232, 85, 47, 0.95);
+}
+
+.player-badge .status-tag {
+  font-size: 0.75rem;
+  opacity: 0.85;
+  margin-top: 4px;
+}
+
+.status-thinking { color: #e8c468; }
+.status-pok { color: #e8552f; font-weight: bold; }
+.status-stay { color: #9fd6b8; }
+.status-drawn { color: #8ecbe0; }
+.status-out_of_money { color: #8a8a8a; }
+
+/* ---------- ผลลัพธ์ตอนเปิดไพ่ ต่อที่นั่ง ----------
+   badge วงกลมเล็กมุมหนึ่งของ .player-badge/.my-hand-section บอกผลแพ้ชนะ
+   ความรู้สึกไดนามิก (shimmer/dim) มาจาก reveal-win-shimmer/reveal-lose-dim ที่มีอยู่แล้วใน animations.css
+   ห้ามใช้สีป๊อก #e8552f ตรงนี้ เพื่อไม่ให้ปนความหมายกับสถานะ "ป๊อก" */
+
+.seat-result-badge {
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  z-index: 2;
+  pointer-events: none;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+}
+
+.seat-result-badge.is-win {
+  background: radial-gradient(circle at 30% 30%, #f5dfa0, #e8c468 60%, #a9782f 100%);
+  color: #1a0a0d;
+}
+
+.seat-result-badge.is-lose {
+  background: rgba(140, 140, 140, 0.55);
+  color: #f5efe0;
+}
+
+.bet-delta-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+.bet-delta-label.is-win { color: #e8c468; }
+.bet-delta-label.is-lose { color: #a8a8a8; }
+
+/* ---------- ไพ่ ---------- */
+
+.card-row {
+  --card-w: 56px;
+  --card-h: 80px;
+  display: flex;
+  gap: 8px;
+  width: calc(var(--card-w) * 2.3);
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+/* พัดไพ่ 3 ใบ: ใบกลางอยู่กึ่งกลางไม่ขยับ ใบแรก/ใบที่สามทับเข้ามาแล้วเอียงออกให้ดูเป็นพัดจริง
+   เป็นค่า static ล้วนๆ (ไม่ใช่ animation ใหม่) จึงไม่ผิดกฎ transform/opacity-only ของ animations.css */
+.card-row.is-fan {
+  gap: 0;
+}
+
+.card-row.is-fan > :nth-child(1),
+.card-row.is-fan > :nth-child(3) {
+  margin-left: calc(var(--card-w) * -0.4);
+}
+
+.card-row.is-fan > :nth-child(1) {
+  transform: rotate(-8deg) translateY(4px);
+  transform-origin: bottom center;
+  z-index: 1;
+}
+
+.card-row.is-fan > :nth-child(3) {
+  transform: rotate(8deg) translateY(4px);
+  transform-origin: bottom center;
+  z-index: 1;
+}
+
+.card-row.is-fan > :nth-child(2) {
+  z-index: 2;
+}
+
+.playing-card {
+  width: var(--card-w);
+  height: var(--card-h);
+  background: #f5efe0;
+  color: #1a1a1a;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.playing-card.suit-red {
+  color: #c0392b;
+}
+
+/* ---------- โครงสร้างการ์ดพลิก 3 มิติ ----------
+   .flip-shell   = กล่องนอก กำหนด perspective (ระยะมองแบบ 3 มิติ ยิ่งค่าน้อยยิ่งพลิกดูลึก/บิดเบี้ยวมาก)
+   .flip-inner   = ตัวที่หมุนจริงด้วย rotateY ต้องมี preserve-3d ไม่งั้นลูกๆ (หน้า-หลัง) จะถูกกด
+                   ให้แบนเป็น 2 มิติก่อนหมุน ทำให้เห็นทั้งสองหน้าซ้อนกันแทนที่จะเห็นแค่ด้านที่หันเข้ากล้อง
+   .card-face    = ทั้งหน้าไพ่และหลังไพ่ ใช้ backface-visibility: hidden เพื่อซ่อนตัวเองตอนหมุนเลย 90deg
+                   (ไม่งั้นจะเห็นตัวอักษร/ลายไพ่กลับด้านทะลุออกมา)
+   .card-back ตั้งไว้ 0deg (หันเข้ากล้องตอนเริ่ม), .card-front ตั้งไว้ 180deg (หันเข้ากล้องหลังพลิกครบ)
+*/
+
+.flip-shell {
+  width: var(--card-w);
+  height: var(--card-h);
+  perspective: 600px;
+}
+
+.flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+}
+
+.card-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+  backface-visibility: hidden;
+}
+
+.card-back {
+  background: #3a0f16;
+  border: 2px solid #e8c468;
+  transform: rotateY(0deg);
+}
+
+.card-front {
+  background: #f5efe0;
+  color: #1a1a1a;
+  transform: rotateY(180deg);
+}
+
+.card-front.suit-red {
+  color: #c0392b;
+}
+
+/* การ์ดปิดหน้าของ "คนอื่น" — ไม่มีวันพลิก จึงไม่ต้องมีโครง 3D/backface เหมือน .flip-shell เลย
+   (ค่าจริงของไพ่คนอื่นไม่ถูกส่งมาที่ client ด้วยซ้ำก่อนถึงจังหวะ reveal ดู to_dict_for ฝั่ง server) */
+.card-back-static {
+  width: var(--card-w);
+  height: var(--card-h);
+  background: #3a0f16;
+  border: 2px solid #e8c468;
+  border-radius: 6px;
+}
+
+.status-text {
+  font-size: 0.95rem;
+  min-height: 1.2em;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.action-buttons .btn {
+  flex: 1;
+}
+
+/* ---------- ไพ่ตัวเอง: จุดโฟกัสหลัก เด่นกว่าที่นั่งอื่นชัดเจน ---------- */
+
+.my-hand-section {
+  position: relative;
+  background: rgba(58, 15, 22, 0.35);
+  border: 1px solid rgba(232, 196, 104, 0.3);
+  border-radius: 14px;
+  padding: 12px;
+}
+
+.my-hand-section .card-row {
+  /* ~1.7x ขนาดไพ่ปกติ (56x80 -> ~95x136, 64x92 -> ~109x156 ที่ breakpoint 600px) */
+  --card-w: 95px;
+  --card-h: 136px;
+}
+
+/* ---------- เดิมพัน ---------- */
+
+.betting-section {
+  margin-top: 8px;
+  background: #3a0f16;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.betting-section .lobby-buttons {
+  flex-direction: row;
+  margin-top: 0;
+}
+
+.stake-preset-btn {
+  flex: 1;
+}
+
+.stake-preset-btn.is-selected {
+  outline: 2px solid #e8c468;
+}
+
+#stake-custom-input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  font-size: 1rem;
+  font-family: inherit;
+  background: #24080d;
+  color: #f5efe0;
+}
+
+#stake-custom-input:focus {
+  outline: none;
+  border-color: #e8c468;
+}
+
+.bet-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.bet-amount-display {
+  font-family: "Kanit", "Sarabun", sans-serif;
+  font-weight: 700;
+  color: #e8c468;
+  white-space: nowrap;
+  min-width: 4.5em;
+  text-align: right;
+}
+
+/* slider เดิมพัน: thumb วงกลม >=44px ตามมาตรฐาน touch target, track เติมสีทองตามเปอร์เซ็นต์ที่ลากผ่าน
+   (--fill-percent ถูก set จาก main.js ทุกครั้งที่มี input event บนตัวสไลด์) */
+#bet-slider {
+  --fill-percent: 0%;
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    #e8c468 0%,
+    #e8c468 var(--fill-percent),
+    rgba(245, 239, 224, 0.15) var(--fill-percent),
+    rgba(245, 239, 224, 0.15) 100%
+  );
+  outline: none;
+  cursor: pointer;
+}
+
+#bet-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #f5dfa0, #e8c468 40%, #a9782f 100%);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+  border: none;
+  cursor: pointer;
+}
+
+#bet-slider::-moz-range-track {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(245, 239, 224, 0.15);
+}
+
+#bet-slider::-moz-range-progress {
+  height: 8px;
+  border-radius: 999px;
+  background: #e8c468;
+}
+
+#bet-slider::-moz-range-thumb {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #f5dfa0, #e8c468 40%, #a9782f 100%);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+  border: none;
+  cursor: pointer;
+}
+
+/* ---------- เหรียญเงิน ---------- */
+
+.coin-icon {
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #f5dfa0, #e8c468 40%, #a9782f 100%);
+  box-shadow: inset 0 -2px 3px rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
+}
+
+/* ---------- overlay เอฟเฟกต์ชั่วคราว (ตราปั๊ม "ป๊อก!") ---------- */
+
+#fx-layer {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 999;
+}
+
+.pok-stamp {
+  font-family: "Kanit", "Sarabun", sans-serif;
+  font-weight: 800;
+  font-size: 4rem;
+  color: #e8552f;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* ---------- จอใหญ่ขึ้น (แท็บเล็ต/คอมพิวเตอร์) ---------- */
+
+@media (min-width: 600px) {
+  .lobby-buttons {
+    flex-direction: row;
+  }
+
+  .card-row {
+    --card-w: 64px;
+    --card-h: 92px;
+  }
+
+  .my-hand-section .card-row {
+    --card-w: 109px;
+    --card-h: 156px;
+  }
+
+  .playing-card {
+    font-size: 1.3rem;
+  }
+
+  .card-face {
+    font-size: 1.3rem;
+  }
+
+  .pok-stamp {
+    font-size: 5.5rem;
+  }
+
+  .table-oval {
+    height: 380px;
+  }
+}
+
+/* ===== Pok Deng Arena UX layer ===== */
+:root { --gold:#e8c468; --wine:#3a0f16; --deep:#14070a; --cream:#f5efe0; --muted:rgba(245,239,224,.68); }
+body { background: radial-gradient(circle at 50% -10%, #5a1622 0%, #1a0a0d 48%, #0e0507 100%); }
+.screen { max-width: 1100px; padding: 22px; }
+.hero-card { text-align:center; padding:26px 18px 14px; }
+.brand-mark { width:58px;height:58px;margin:0 auto 10px;border:2px solid var(--gold);border-radius:18px;display:grid;place-items:center;color:var(--gold);font-size:28px;box-shadow:0 0 28px rgba(232,196,104,.18); }
+.eyebrow { font:700 .72rem "Kanit",sans-serif; letter-spacing:.14em;color:var(--gold);opacity:.9; }
+.hero-card h1 { font-size:clamp(2rem,5vw,3.6rem); margin:6px 0; }
+.hero-card h1 span { color:#fff; }
+.hero-subtitle { max-width:700px;margin:0 auto;color:var(--muted);font-size:1.05rem; }
+.feature-strip { display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:18px auto 4px; }
+.feature-strip span,.score-chip,.room-label { border:1px solid rgba(232,196,104,.24);background:rgba(58,15,22,.7);padding:6px 10px;border-radius:999px;font-size:.8rem; }
+.glass-card { background:linear-gradient(145deg,rgba(68,17,27,.92),rgba(35,9,14,.92));border:1px solid rgba(232,196,104,.18);box-shadow:0 18px 50px rgba(0,0,0,.25); }
+.lobby-card { max-width:760px;margin:14px auto; }
+.section-title-row,.lobby-toolbar,.lobby-header,.hand-heading,.bet-head { display:flex;align-items:center;justify-content:space-between;gap:12px; }
+.icon-btn { width:38px;height:38px;border-radius:12px;border:1px solid rgba(232,196,104,.3);background:#24080d;color:var(--cream);font-size:1.1rem;cursor:pointer; }
+.btn-large { min-height:52px;font-size:1.08rem; }
+.btn-gold-soft { background:rgba(232,196,104,.14);color:var(--gold);border:1px solid rgba(232,196,104,.3); }
+.header-actions { display:flex;align-items:center;gap:8px;flex-wrap:wrap; }
+.profile-card { display:flex;align-items:center;gap:12px;padding:13px 16px;border-radius:16px;margin:12px 0 20px; }
+.profile-avatar { width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#e8c468,#a9782f);color:#1a0a0d;display:grid;place-items:center;font:800 1.2rem Kanit; }
+.profile-main{display:flex;flex-direction:column;gap:2px;flex:1}.profile-main span{font-size:.78rem;color:var(--muted)}.profile-coins{font:800 1.1rem Kanit;color:var(--gold)}
+.room-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}.room-card{min-height:100px;border-radius:16px;padding:16px;background:linear-gradient(145deg,#3a0f16,#24080d);border:1px solid rgba(232,196,104,.2);}.room-card-name{font-size:1.2rem}.room-card-meta{color:var(--muted)}
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0}.mode-option{cursor:pointer}.mode-option input{position:absolute;opacity:0}.mode-option span{display:flex;flex-direction:column;gap:3px;padding:13px;border:1px solid rgba(232,196,104,.18);border-radius:13px;background:#24080d}.mode-option input:checked+span{border-color:var(--gold);box-shadow:0 0 0 1px rgba(232,196,104,.25)}.mode-option small{color:var(--muted)}
+.seat-preset-row,.bet-quick-row{display:flex;gap:8px}.seat-preset,.stake-preset-btn,.bet-quick{flex:1}.seat-preset.is-selected,.stake-preset-btn.is-selected{outline:2px solid var(--gold)}
+.game-header{position:sticky;top:0;z-index:20;padding:8px 0;background:linear-gradient(#1a0a0dee,#1a0a0d00);backdrop-filter:blur(6px)}
+.phase-bar{position:relative;height:38px;border:1px solid rgba(232,196,104,.15);background:#24080d;border-radius:999px;overflow:hidden;display:flex;align-items:center;padding:0 14px;margin-bottom:10px}.phase-progress{position:absolute;inset:0 auto 0 0;width:15%;background:linear-gradient(90deg,rgba(232,196,104,.18),rgba(232,196,104,.05));transition:width .3s ease}.phase-label,.timer-label{position:relative;z-index:1;font:700 .9rem Kanit}.timer-label{margin-left:auto;color:var(--gold)}
+.dealer-info{background:rgba(58,15,22,.6);border:1px solid rgba(232,196,104,.12);padding:8px 12px;border-radius:12px;margin-bottom:10px;color:var(--muted);font-size:.86rem}.dealer-info b{color:var(--cream)}
+.table-oval{height:400px;max-width:900px;border-width:7px}.my-hand-section{max-width:900px;margin:0 auto;padding:18px}.my-hand-section .card-row{--card-w:110px;--card-h:158px}.hand-heading h2{margin:0}.action-buttons{gap:12px}.action-main{min-height:58px;font-size:1.12rem}.action-explanation{margin-top:10px;text-align:center;color:var(--muted);font-size:.86rem}.betting-section{padding:15px;border:1px solid rgba(232,196,104,.14)}
+.modal-layer{position:fixed;inset:0;background:rgba(8,3,5,.75);backdrop-filter:blur(10px);z-index:2000;display:grid;place-items:center;padding:16px}.modal-card{width:min(680px,100%);max-height:85vh;overflow:auto;background:linear-gradient(145deg,#45111b,#21070c);border:1px solid rgba(232,196,104,.3);border-radius:22px;padding:20px;box-shadow:0 30px 90px rgba(0,0,0,.5)}.modal-header{display:flex;justify-content:space-between;align-items:flex-start}.tutorial-content{min-height:210px;display:grid;place-items:center}.tutorial-step{max-width:540px;text-align:center}.tutorial-number{width:64px;height:64px;margin:auto;border-radius:50%;display:grid;place-items:center;background:rgba(232,196,104,.12);border:1px solid rgba(232,196,104,.4);color:var(--gold);font:800 1.4rem Kanit}.tutorial-step p{font-size:1.05rem;line-height:1.75;color:var(--muted)}.tutorial-footer{display:flex;align-items:center;justify-content:space-between;gap:10px}.tabs{display:flex;gap:8px;margin:15px 0}.tab-btn{flex:1;padding:10px;border-radius:10px;border:1px solid rgba(232,196,104,.18);background:#24080d;color:var(--cream);cursor:pointer}.tab-btn.is-active{border-color:var(--gold);color:var(--gold)}.table-scroll{overflow:auto}.leader-table{width:100%;border-collapse:collapse}.leader-table th,.leader-table td{text-align:left;padding:10px;border-bottom:1px solid rgba(245,239,224,.08);white-space:nowrap}.leader-table th{color:var(--gold);font-size:.78rem}.empty-state{text-align:center;padding:30px;color:var(--muted)}
+.connection-banner{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:3000;background:#8a271a;color:#fff;padding:10px 16px;border-radius:999px;box-shadow:0 8px 30px rgba(0,0,0,.3)}
+#toast-layer{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:4000;display:flex;flex-direction:column;gap:8px;align-items:center}.toast{background:#e8c468;color:#1a0a0d;padding:11px 17px;border-radius:999px;font:700 .92rem Kanit;box-shadow:0 8px 30px rgba(0,0,0,.35)}.toast-error{background:#7e241a;color:#fff}
+.muted{color:var(--muted)}.small{font-size:.78rem}
+@media (max-width:700px){.screen{padding:12px}.table-oval{height:310px}.my-hand-section .card-row{--card-w:86px;--card-h:124px}.header-actions .btn{padding:9px 10px;font-size:.82rem}.mode-grid{grid-template-columns:1fr}.lobby-toolbar{align-items:flex-end}.room-list{grid-template-columns:1fr}.hero-card{padding-top:12px}.feature-strip span{font-size:.72rem}}
+
+
+/* ---------- UX/UI polish: tutorial, dealer picker, leaderboard, timer, broadcast ---------- */
+.tutorial-choice-card {
+  width: min(480px, 100%);
+  text-align: center;
+  padding: 30px;
+}
+.tutorial-choice-icon {
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 14px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(232,196,104,.12);
+  border: 1px solid rgba(232,196,104,.4);
+  color: var(--gold);
+  font: 800 1.5rem Kanit, sans-serif;
+}
+.tutorial-choice-card h2 { margin: 4px 0 8px; }
+.tutorial-choice-actions { display:grid; grid-template-columns:1fr 1.2fr; gap:10px; margin-top:22px; }
+.tutorial-choice-actions .btn { min-height:50px; }
+
+.dealer-options {
+  display: grid;
+  gap: 9px;
+  margin: 8px 0 12px;
+}
+.dealer-option {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 44px 1fr 28px;
+  align-items: center;
+  gap: 11px;
+  text-align: left;
+  padding: 12px 13px;
+  border: 1px solid rgba(232,196,104,.16);
+  border-radius: 15px;
+  background: linear-gradient(135deg, rgba(36,8,13,.96), rgba(58,15,22,.72));
+  color: var(--cream);
+  cursor: pointer;
+  transition: border-color .18s ease, transform .18s ease, background .18s ease, box-shadow .18s ease;
+}
+.dealer-option:hover { transform: translateY(-1px); border-color: rgba(232,196,104,.5); }
+.dealer-option.is-selected {
+  border-color: var(--gold);
+  background: linear-gradient(135deg, rgba(86,22,32,.95), rgba(48,10,17,.95));
+  box-shadow: 0 0 0 1px rgba(232,196,104,.2), 0 10px 24px rgba(0,0,0,.18);
+}
+.dealer-option-icon {
+  width: 42px; height: 42px; display:grid; place-items:center;
+  border-radius: 12px; background: rgba(232,196,104,.1); font-size: 1.35rem;
+}
+.dealer-option-main { display:flex; flex-direction:column; gap:2px; min-width:0; }
+.dealer-option-main b { font: 700 .98rem Kanit, sans-serif; }
+.dealer-option-main small { color: var(--muted); line-height:1.35; }
+.dealer-option-check {
+  width: 24px; height: 24px; display:grid; place-items:center; border-radius:50%;
+  border:1px solid rgba(245,239,224,.18); color:transparent; font-weight:800;
+}
+.dealer-option.is-selected .dealer-option-check {
+  color:#1a0a0d; background:var(--gold); border-color:var(--gold);
+}
+
+.period-tabs {
+  margin-top: 10px;
+  padding: 4px;
+  gap: 4px;
+  border: 1px solid rgba(232,196,104,.12);
+  border-radius: 13px;
+  background: rgba(20,5,9,.58);
+}
+.period-btn {
+  flex:1;
+  min-height: 38px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--muted);
+  font: 600 .84rem Kanit, sans-serif;
+  cursor:pointer;
+  transition: background .18s ease, color .18s ease, box-shadow .18s ease;
+}
+.period-btn:hover { color: var(--cream); }
+.period-btn.is-active {
+  color:#1a0a0d;
+  background:linear-gradient(135deg,#f0cf72,#d9aa3e);
+  box-shadow:0 4px 12px rgba(0,0,0,.2);
+}
+.leader-table tbody tr { transition: background .15s ease; }
+.leader-table tbody tr:hover { background: rgba(232,196,104,.045); }
+.leader-table th:first-child,.leader-table td:first-child { width:44px; }
+.leader-table td:nth-child(2) { min-width:130px; }
+.leader-table td { color: #eadfce; }
+.leader-table th { letter-spacing:.02em; }
+
+.dealer-info {
+  position: relative;
+  z-index: 30;
+  min-height: 42px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding: 9px 14px;
+  margin-bottom: 14px;
+  background: linear-gradient(90deg, rgba(72,17,28,.86), rgba(38,8,13,.76));
+  border-color: rgba(232,196,104,.22);
+  box-shadow: 0 8px 24px rgba(0,0,0,.16);
+}
+.dealer-info::before {
+  content:"BROADCAST";
+  flex:0 0 auto;
+  font: 800 .63rem Kanit, sans-serif;
+  letter-spacing:.09em;
+  color:var(--gold);
+  padding:3px 7px;
+  border-radius:999px;
+  background:rgba(232,196,104,.08);
+}
+.table-oval { margin-top: 18px; }
+.table-oval .seat { z-index: 5; }
+.seat-count-3 .seat-2 { top: 20% !important; }
+.seat-count-5 .seat-3 { top: 20% !important; }
+.seat-count-6 .seat-3, .seat-count-6 .seat-4 { top: 21% !important; }
+.seat-count-7 .seat-4 { top: 20% !important; }
+.seat-count-8 .seat-4 { top: 20% !important; }
+
+.phase-bar.timer-warning { border-color: rgba(232,196,104,.55); }
+.phase-bar.timer-warning .timer-label { animation: timer-pulse 1s ease-in-out infinite; }
+.phase-bar.timer-danger { border-color: rgba(232,85,47,.8); box-shadow: 0 0 18px rgba(232,85,47,.14); }
+.phase-bar.timer-danger .timer-label { color:#ff8c72; animation: timer-pulse .45s ease-in-out infinite; }
+@keyframes timer-pulse { 50% { opacity:.55; } }
+
+@media (max-width:700px) {
+  .tutorial-choice-actions { grid-template-columns:1fr; }
+  .dealer-option { grid-template-columns:40px 1fr 26px; padding:10px; }
+  .dealer-option-icon { width:38px; height:38px; }
+  .dealer-option-main small { font-size:.72rem; }
+  .dealer-info { align-items:flex-start; flex-wrap:wrap; }
+  .table-oval { margin-top:14px; }
+}
+
+
+/* ---------- Round result modal ---------- */
+.round-result-modal {
+  position: relative;
+  width: min(500px, 100%);
+  overflow: hidden;
+  text-align: center;
+  padding: 32px 28px 26px;
+  border-width: 1px;
+}
+.round-result-glow {
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  top: -150px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: rgba(232,196,104,.16);
+  filter: blur(30px);
+  pointer-events: none;
+}
+.round-result-icon {
+  position: relative;
+  width: 74px;
+  height: 74px;
+  margin: 0 auto 12px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font: 800 2.1rem Kanit, sans-serif;
+  background: rgba(232,196,104,.12);
+  border: 2px solid var(--gold);
+  color: var(--gold);
+  box-shadow: 0 0 28px rgba(232,196,104,.14);
+}
+.round-result-modal.is-lose .round-result-icon {
+  color: #e9a18f;
+  border-color: rgba(232,161,143,.55);
+  background: rgba(126,36,26,.18);
+  box-shadow: 0 0 28px rgba(126,36,26,.18);
+}
+.round-result-title {
+  position: relative;
+  margin: 4px 0 5px;
+  font-size: 2rem;
+  color: var(--gold);
+}
+.round-result-modal.is-lose .round-result-title { color: #e9a18f; }
+.round-result-subtitle {
+  position: relative;
+  margin: 0 0 20px;
+  color: var(--muted);
+}
+.round-result-details {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.result-stat {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 13px;
+  border: 1px solid rgba(232,196,104,.12);
+  border-radius: 12px;
+  background: rgba(20,5,9,.46);
+  text-align: left;
+}
+.result-stat span { color: var(--muted); font-size: .82rem; }
+.result-stat b { color: var(--cream); font-family: Kanit, sans-serif; }
+.result-stat.result-profit { grid-column: 1 / -1; border-color: rgba(232,196,104,.28); background: rgba(232,196,104,.07); }
+.round-result-modal.is-win .result-profit b { color: var(--gold); }
+.round-result-modal.is-lose .result-profit b { color: #e9a18f; }
+.round-result-modal .btn-large { position: relative; min-height: 50px; }
+@media (max-width:700px) {
+  .round-result-modal { padding: 26px 18px 20px; }
+  .round-result-details { grid-template-columns: 1fr; }
+  .result-stat.result-profit { grid-column: auto; }
+}

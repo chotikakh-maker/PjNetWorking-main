@@ -1,0 +1,298 @@
+/* animations.css
+   ------------------------------------------------------------------
+   รวม @keyframes และ class ที่ทำ animation ทั้งหมดของเกม แยกออกจาก style.css
+   โดยตั้งใจ เพื่อให้ดูง่ายว่า "อะไรขยับ" ทั้งหมดอยู่ที่ไฟล์นี้ที่เดียว
+
+   กฎที่ยึดตลอดไฟล์นี้: animate เฉพาะ transform และ opacity เท่านั้น
+   (ไม่แตะ width/height/top/left) เพราะสองค่านี้ browser ทำบน GPU ได้
+   โดยไม่ต้องคำนวณ layout ใหม่ (reflow) ทำให้ลื่นแม้บนมือถือรุ่นกลางๆ
+
+   ทำไมใช้ @keyframes (animation) แทน transition ทั้งไฟล์:
+   ui.js ใช้วิธี "ลบของเก่าทั้งหมดแล้วสร้างใหม่" (innerHTML = "" แล้ว appendChild)
+   ทุกครั้งที่ render การ์ด/ผู้เล่นใหม่ — transition ต้องมีเฟรม "ก่อน" ที่ค่า commit ไปแล้ว
+   ถึงจะเห็นการเปลี่ยนแปลงระหว่างค่าเก่ากับค่าใหม่ ซึ่ง element ที่เพิ่งถูกสร้างจะไม่มี "ก่อน" ให้เทียบ
+   แต่ @keyframes เล่นตามไทม์ไลน์ของตัวเองเสมอไม่ว่า class จะถูกใส่ตอนไหน จึงเหมาะกับ pattern นี้กว่า
+   ------------------------------------------------------------------ */
+
+/* ================== 1) แจกไพ่ (deal) ================== */
+/*
+  แนวคิด: การ์ดแต่ละใบเริ่มจากจุดสมมติ "กองไพ่กลาง" (offset คงที่จากตำแหน่งจริงของมัน)
+  แล้ววิ่ง translate เข้าตำแหน่งจริง (0,0) พร้อมขยายขนาดขึ้นเล็กน้อยจาก scale ที่เล็กกว่า
+  ไม่ต้องคำนวณพิกัดจริงบนจอเลย เพราะ transform คำนวณสัมพัทธ์กับตำแหน่งที่ flex/grid จัดไว้ให้แล้ว
+  (จุดเริ่ม "40px ซ้าย 60px บน" จากตำแหน่งจริง จะดูเหมือนวิ่งมาจากกองไพ่กลางเสมอ ไม่ว่าการ์ดใบนั้น
+  จะอยู่ตำแหน่งไหนบนจอในตอนจบ)
+
+  การ stagger (หน่วงเวลาทีละใบ 100-150ms): ui.js ตั้งค่า custom property --deal-delay ให้แต่ละใบ
+  ผ่าน element.style.setProperty() ก่อน append แล้ว keyframe ด้านล่างอ่านค่านั้นมาใช้เป็น animation-delay
+  วิธีนี้ทำให้ไม่ต้องเขียน @keyframes ซ้ำหลายรอบสำหรับแต่ละ index
+*/
+@keyframes card-deal-in {
+  from {
+    transform: translate(-40px, -60px) scale(0.6);
+    opacity: 0;
+  }
+  to {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+}
+
+.deal-in {
+  animation: card-deal-in 0.32s ease-out both;
+  animation-delay: var(--deal-delay, 0ms);
+}
+
+/* ================== 2) พลิกไพ่ 3 มิติ (flip) — ใช้ร่วมกันทั้งป๊อกและ reveal ================== */
+/*
+  .flip-inner หมุนรอบแกน Y จาก 0deg (เห็นหลังไพ่) ไป 180deg (เห็นหน้าไพ่)
+  ทำงานร่วมกับ .flip-shell{perspective} และ .card-face{backface-visibility} ใน style.css
+  (โครงสร้าง 3 ชั้นนี้อธิบายไว้ละเอียดในคอมเมนต์ของ style.css แล้ว ไม่ทวนซ้ำที่นี่)
+
+  stagger ของ reveal cascade ใช้ตัวแปรเดียวกันแนวคิดกับ deal: --flip-delay ตั้งทีละใบจาก ui.js
+  โดยนับ index ต่อเนื่องข้ามทุกคนในห้อง (เจ้ามือก่อน ตามด้วยผู้เล่นทีละคน) เพื่อให้ทั้งห้องดูเหมือน
+  เปิดไพ่ต่อเนื่องเป็นคลื่นเดียว ไม่ใช่แยกเปิดพร้อมกันทีละแถว
+*/
+@keyframes flip-reveal {
+  from { transform: rotateY(0deg); }
+  to { transform: rotateY(180deg); }
+}
+
+.flip-anim {
+  animation: flip-reveal 0.45s ease-in both;
+  animation-delay: var(--flip-delay, 0ms);
+}
+
+/* พลิกไพ่ตอนป๊อก: จังหวะไวกว่าและมี "กระแทกเกินเป้าเล็กน้อยแล้วดีดกลับ" (overshoot)
+   เพื่อให้รู้สึกเหมือนกระแทกโต๊ะ ต่างจาก reveal ปกติที่นิ่มกว่า */
+@keyframes flip-reveal-pok {
+  0%   { transform: rotateY(0deg); }
+  70%  { transform: rotateY(195deg); }
+  100% { transform: rotateY(180deg); }
+}
+
+.flip-anim.is-pok {
+  animation-name: flip-reveal-pok;
+  animation-duration: 0.32s;
+  animation-timing-function: ease-out;
+}
+
+/* ================== 3) ป๊อก! — ตราปั๊มกลางจอ (signature moment) ================== */
+/*
+  ตัวหนังสือเริ่มใหญ่เกินจริง (scale 3) แล้ว "เด้งตกลง" ผ่านค่า overshoot 2 จังหวะ (0.92 แล้ว 1.06)
+  ก่อนตั้งค่าที่ 1 นิ่งๆ — ให้ความรู้สึกเหมือนตราปั๊มกระแทกลงมาบนโต๊ะจริงๆ ไม่ใช่แค่ zoom-in เรียบๆ
+  ui.js เป็นคนสร้าง element นี้ขึ้นมาใหม่ใส่ #fx-layer แล้วลบตัวเองทิ้งหลัง animationend
+  (ดูฟังก์ชัน showPokStamp ใน ui.js) จึงไม่ต้องมี fade-out ใน keyframe นี้เอง
+*/
+@keyframes pok-stamp-anim {
+  0%   { transform: scale(3); opacity: 0; }
+  50%  { transform: scale(0.92); opacity: 1; }
+  75%  { transform: scale(1.06); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.pok-stamp {
+  animation: pok-stamp-anim 0.5s cubic-bezier(0.2, 0.8, 0.3, 1) both;
+}
+
+/* ป๊อกเอง (ไม่ใช่ป๊อกของคนอื่น) ให้จอสั่นเบาๆ ทีเดียวตอนตราปั๊มลง เพิ่มความรู้สึก "กระแทก"
+   สั่นด้วย translate ล้วนๆ (ไม่แตะ top/left) จึงยังอยู่ในกรอบ transform/opacity only */
+@keyframes screen-thump {
+  0%   { transform: translateY(0); }
+  30%  { transform: translateY(3px); }
+  60%  { transform: translateY(-2px); }
+  100% { transform: translateY(0); }
+}
+
+.fx-thump {
+  animation: screen-thump 0.25s ease-out;
+}
+
+/* ================== 4) กรอบเรืองแสงตาที่กำลังคิด / ตอนป๊อก ================== */
+/*
+  box-shadow ของ ::after ถูกกำหนดเป็นค่านิ่งไว้แล้วใน style.css (.is-turn::after / .is-pok::after)
+  สิ่งที่ขยับอยู่ในไฟล์นี้มีแค่ "opacity" ของ pseudo-element นั้น สลับขึ้น-ลงเป็นจังหวะ (pulse)
+  วิธีนี้ทำให้ได้เอฟเฟกต์แสงเรืองแบบ dynamic โดยไม่ต้อง animate box-shadow ตรงๆ (ซึ่งเปลืองกว่า)
+*/
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.35; }
+  50%      { opacity: 1; }
+}
+
+.player-badge.is-turn::after {
+  animation: glow-pulse 1.6s ease-in-out infinite;
+}
+
+/* ป๊อกเรืองไวกว่าและสว่างกว่าตาปกติ ให้ความรู้สึกตื่นเต้นกว่า "แค่กำลังคิด" */
+@keyframes glow-pulse-fast {
+  0%, 100% { opacity: 0.55; }
+  50%      { opacity: 1; }
+}
+
+.player-badge.is-pok::after {
+  animation: glow-pulse-fast 0.9s ease-in-out infinite;
+}
+
+/* ================== 5) แง้มไพ่ตัวเอง (กดค้าง, peek-to-see) ================== */
+/*
+  กลไกนี้ขับด้วย JS (ui.js: attachPeekHandlers) เพราะมุมหมุนต้องตามเวลาที่ "ค้าง" นิ้ว/เมาส์ไว้จริง
+  ไม่ใช่ animation ที่รันตามไทม์ไลน์คงที่ — ระหว่างกดค้าง ui.js set .flip-inner.style.transform ตรงๆ
+  ทุกเฟรมผ่าน requestAnimationFrame (ไม่ใช้ class ใน keyframe เลย)
+
+  .card-peek-snap-back คือ "ข้อยกเว้นเดียว" ในไฟล์นี้ที่ใช้ transition แทน @keyframes:
+  เพราะตอนปล่อยนิ้วก่อนแง้มครบ มุมเริ่มต้นของการ "ปิดคืน" ไม่แน่นอน (อาจปล่อยตอน 30deg หรือ 170deg)
+  @keyframes เล่นจาก "from" คงที่เสมอ จึงกระตุกกลับไปเริ่มที่ 0deg ก่อนแล้วค่อยเล่น ซึ่งดูสะดุด
+  transition ทำงานจากค่า inline transform ปัจจุบัน (ที่ set ไว้ระหว่างกดค้าง) ไปยัง 0deg ได้ตรงๆ
+  จึง interrupt กลางทางได้อย่างนิ่มนวล ต่างจากทุก animation อื่นในไฟล์นี้ที่ render ใหม่ทุกครั้ง (ไม่มีปัญหานี้)
+*/
+.card-peek-snap-back {
+  transition: transform 0.18s ease-out;
+}
+
+/* ================== 6) ผลลัพธ์: ฝั่งชนะเรืองทอง / ฝั่งแพ้จางลงเล็กน้อย ================== */
+/*
+  ทั้งสองเอฟเฟกต์ตั้งใจให้ "แผ่วมาก" ตามสเปก (ห้ามฉูดฉาด) — ฝั่งชนะกะพริบความสว่างเบาๆครั้งเดียว
+  (ไม่ loop ต่อเนื่อง เพราะจะเกะกะสายตาถ้าเปิดค้างไว้นาน) ฝั่งแพ้แค่ลด opacity ค้างไว้เฉยๆ (ไม่ใช่ animation)
+*/
+@keyframes reveal-win-shimmer-anim {
+  0%   { opacity: 0.7; }
+  50%  { opacity: 1; }
+  100% { opacity: 0.7; }
+}
+
+.reveal-win-shimmer {
+  animation: reveal-win-shimmer-anim 1.8s ease-in-out 2;
+}
+
+.reveal-lose-dim {
+  opacity: 0.55;
+}
+
+/* ================== 6b) เหรียญเดิมพัน: ไหลเข้ากลางโต๊ะ / บินไปหาผู้ชนะ ================== */
+/*
+  ทั้งสองทิศทางใช้ custom property ที่ ui.js คำนวณจาก getBoundingClientRect() จริงระหว่าง
+  ตำแหน่งต้นทาง (ที่นั่งผู้เล่น) กับปลายทาง (กลางโต๊ะ ตอนวางเดิมพัน / ที่นั่งผู้ชนะ ตอน settle)
+  แล้ว set เป็น --chip-from-x/--chip-from-y (หรือ --chip-to-x/--chip-to-y) ก่อน append element
+  วิธีนี้เป็นจุดเดียวในทั้งโปรเจกต์ที่ต้องคำนวณพิกัดจริงด้วย JS (ต่างจาก seat layout ที่เป็น % ตายตัว)
+  เพราะปลายทาง/ต้นทางเปลี่ยนไปตามจำนวนผู้เล่นและที่นั่งจริงบนจอ ไม่สามารถ hardcode เป็น class ได้
+*/
+@keyframes chip-slide-in-anim {
+  from {
+    transform: translate(var(--chip-from-x, 0px), var(--chip-from-y, 0px)) scale(0.7);
+    opacity: 0;
+  }
+  to {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+}
+
+.chip-slide-in {
+  animation: chip-slide-in-anim 0.3s ease-out both;
+}
+
+@keyframes chip-fly-out-anim {
+  from {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: translate(var(--chip-to-x, 0px), var(--chip-to-y, 0px)) scale(0.7);
+    opacity: 0;
+  }
+}
+
+.chip-fly-out {
+  animation: chip-fly-out-anim 0.4s ease-in both;
+}
+
+/* ================== 7) เปลี่ยนหน้าจอ/ส่วนต่างๆ แบบ fade ไม่ตัดฉับ ================== */
+/*
+  display:none ไม่สามารถ animate ได้ตรงๆ (ไม่มีค่า "ระหว่างกลาง" ให้ browser คำนวณ)
+  จึงใช้วิธีมาตรฐาน: JS ใส่ class .fx-fade-out ก่อน แล้วรอ "animationend" ค่อยเพิ่ม .hidden จริง
+  ตอนจะโชว์กลับ ให้เอา .hidden ออกก่อน (กลับมาเป็น display ปกติ) แล้วค่อยใส่ .fx-fade-in
+  ดูการ implement เต็มที่ฟังก์ชัน showEl()/hideEl() ใน ui.js
+*/
+@keyframes fx-fade-in-anim {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fx-fade-out-anim {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(6px); }
+}
+
+.fx-fade-in {
+  animation: fx-fade-in-anim 0.25s ease-out both;
+}
+
+.fx-fade-out {
+  animation: fx-fade-out-anim 0.2s ease-in both;
+}
+
+/* ------------------------------------------------------------------
+   prefers-reduced-motion: ผู้ใช้บางคนตั้งค่าระบบ/เบราว์เซอร์ไว้ว่าไม่ต้องการ motion เยอะ
+   (อาจเพราะเวียนหัวง่ายหรือแค่ไม่ชอบ) เราต้อง "เคารพ" ค่านี้ แต่ไม่ใช่ตัดทุกอย่างจนผู้เล่นงงว่า
+   เกิดอะไรขึ้น (เช่น ไม่รู้ว่าตัวเองป๊อกไปแล้ว) กลยุทธ์คือทำ 2 ชั้น:
+
+   ชั้นที่ 1 (safety net): บีบทุก animation ในเว็บนี้ให้เกือบจบทันที (0.001ms) แบบกว้างๆ
+   ชั้นที่ 2 (exception): จุดที่ "ต้องสื่อสารสถานะ" จริงๆ (แจกไพ่/พลิกไพ่/ตราป๊อก/fade เปลี่ยนหน้า)
+   ให้แทนที่ด้วย fade แบบสั้นๆเบาๆแทน เพื่อให้ผู้ใช้ยังรู้ว่า "มีอะไรเปลี่ยน" โดยไม่มีการหมุน/บิด/สั่น
+   ส่วนกรอบเรืองแสงแบบ pulse (turn/pok) ตัด animation ทิ้งไปเลย แล้วโชว้เป็นแสงนิ่งค้างไว้แทน
+   (ยังเห็นว่าใครกำลังตา/ป๊อกอยู่ แค่ไม่กะพริบ)
+   ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  .deal-in,
+  .flip-anim,
+  .flip-anim.is-pok,
+  .fx-fade-in,
+  .fx-fade-out {
+    animation-name: fx-fade-in-anim;
+    animation-duration: 0.15s !important;
+    animation-delay: 0ms !important;
+  }
+
+  .fx-fade-out {
+    animation-name: fx-fade-out-anim;
+  }
+
+  .pok-stamp {
+    animation-name: fx-fade-in-anim;
+    animation-duration: 0.2s !important;
+  }
+
+  .fx-thump {
+    animation: none !important;
+  }
+
+  .player-badge.is-turn::after,
+  .player-badge.is-pok::after {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+
+  .reveal-win-shimmer {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+
+  .chip-slide-in,
+  .chip-fly-out {
+    animation-name: fx-fade-in-anim;
+    animation-duration: 0.15s !important;
+  }
+
+  .chip-fly-out {
+    animation-name: fx-fade-out-anim;
+  }
+
+  .card-peek-snap-back {
+    transition-duration: 0.001ms !important;
+  }
+}

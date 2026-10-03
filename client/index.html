@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1a0a0d" />
+  <title>Pok Deng Arena</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@600;700;800&family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+</head>
+<body>
+  <div id="connection-banner" class="connection-banner hidden"></div>
+
+  <section id="connect-screen" class="screen connect-screen">
+    <div class="hero-card">
+      <div class="brand-mark">♠</div>
+      <div class="eyebrow">REAL-TIME • SERVER AUTHORITATIVE</div>
+      <h1>Pok Deng <span>Arena</span></h1>
+      <p class="hero-subtitle">ป๊อกเด้ง Multiplayer ที่ให้คุณแข่งกับเพื่อนหรือ Smart Dealer แบบเรียลไทม์</p>
+      <div class="feature-strip">
+        <span>⚡ Real-time</span><span>🤖 Smart Dealer</span><span>🏆 Ranking</span><span>🔐 Fair Dealing</span>
+      </div>
+    </div>
+
+    <div class="lobby-card glass-card">
+      <div class="section-title-row"><h2>เข้าเล่น</h2><button id="connect-help-btn" class="icon-btn">?</button></div>
+      <label for="player-name-input">ชื่อผู้เล่น</label>
+      <input id="player-name-input" type="text" placeholder="เช่น BE AM" maxlength="20" autocomplete="nickname" />
+      <label for="server-address-input">Server</label>
+      <input id="server-address-input" type="text" placeholder="ปล่อยว่างถ้าเล่นจากเครื่อง/LAN เดียวกัน" />
+      <button id="connect-btn" class="btn btn-primary btn-large">เข้าสู่ Lobby</button>
+      <p id="connect-error" class="error-text"></p>
+      <p class="muted small">บัญชีใช้ user id ที่สร้างใน browser นี้ • ไม่มีเงินจริง</p>
+    </div>
+  </section>
+
+  <section id="room-list-screen" class="screen hidden">
+    <header class="lobby-header">
+      <div><div class="eyebrow">LOBBY</div><h1>เลือกสนามของคุณ</h1></div>
+      <div class="header-actions">
+        <button id="daily-coin-btn" class="btn btn-gold-soft">🎁 Daily +100</button>
+        <button id="leaderboard-btn" class="btn btn-secondary">🏆 Ranking</button>
+        <button id="tutorial-btn" class="btn btn-secondary">❔ วิธีเล่น</button>
+      </div>
+    </header>
+
+    <div id="profile-card" class="profile-card glass-card"></div>
+    <div class="lobby-toolbar"><div><h2>ห้องที่เปิดอยู่</h2><p class="muted">Practice ฝึกได้ • Ranked มีผลต่อ Ranking</p></div><button id="show-create-room-btn" class="btn btn-primary">＋ สร้างห้อง</button></div>
+    <div id="room-list" class="room-list"></div>
+
+    <div id="create-room-form" class="lobby-card glass-card hidden">
+      <div class="section-title-row"><h2>สร้างห้องใหม่</h2><button id="close-create-room-btn" class="icon-btn">×</button></div>
+      <label for="room-id-input">ชื่อห้อง</label><input id="room-id-input" type="text" placeholder="เช่น ROOM-A" maxlength="20" />
+      <div class="mode-grid">
+        <label class="mode-option"><input type="radio" name="game-mode" value="practice" checked><span><b>🎮 Practice</b><small>เล่นฝึก ไม่กระทบ Ranking</small></span></label>
+        <label class="mode-option"><input type="radio" name="game-mode" value="ranked"><span><b>🏆 Ranked</b><small>ใช้ Virtual Coin + เก็บสถิติ</small></span></label>
+      </div>
+      <label>เจ้ามือ</label>
+      <input id="dealer-strategy-input" type="hidden" value="smart" />
+      <div id="dealer-strategy-options" class="dealer-options" role="radiogroup" aria-label="เลือกเจ้ามือ">
+        <button type="button" class="dealer-option is-selected" data-dealer="smart" role="radio" aria-checked="true">
+          <span class="dealer-option-icon">🤖</span>
+          <span class="dealer-option-main"><b>Smart Student Dealer</b><small>ใช้ logic หลายปัจจัยเพื่อเลือก DRAW / STAND</small></span>
+          <span class="dealer-option-check">✓</span>
+        </button>
+        <button type="button" class="dealer-option" data-dealer="simple" role="radio" aria-checked="false">
+          <span class="dealer-option-icon">🧠</span>
+          <span class="dealer-option-main"><b>Simple Rule Dealer</b><small>เจ้ามือ baseline สำหรับเปรียบเทียบ</small></span>
+          <span class="dealer-option-check">✓</span>
+        </button>
+        <button type="button" class="dealer-option" data-dealer="random" role="radio" aria-checked="false">
+          <span class="dealer-option-icon">🎲</span>
+          <span class="dealer-option-main"><b>Random Dealer</b><small>ตัดสินใจแบบสุ่ม ใช้เป็น baseline</small></span>
+          <span class="dealer-option-check">✓</span>
+        </button>
+        <button type="button" class="dealer-option" data-dealer="human" role="radio" aria-checked="false">
+          <span class="dealer-option-icon">👤</span>
+          <span class="dealer-option-main"><b>Human Dealer</b><small>ผู้เล่นที่เป็นเจ้ามือเลือกเอง</small></span>
+          <span class="dealer-option-check">✓</span>
+        </button>
+      </div>
+      <label>จำนวนที่นั่ง</label>
+      <div class="seat-preset-row"><button class="btn btn-secondary seat-preset is-selected" data-max="5">2–5 คน</button><button class="btn btn-secondary seat-preset" data-max="8">2–8 คน</button></div>
+      <label>เงินเริ่มต้น Practice</label>
+      <div id="stake-presets" class="seat-preset-row"><button type="button" class="btn btn-secondary stake-preset-btn is-selected" data-stake="1000">1,000</button><button type="button" class="btn btn-secondary stake-preset-btn" data-stake="5000">5,000</button></div>
+      <input id="stake-custom-input" type="number" min="1" placeholder="หรือกำหนดเอง" />
+      <button id="create-room-btn" class="btn btn-primary btn-large">สร้างห้อง</button>
+    </div>
+    <p id="lobby-error" class="error-text"></p>
+  </section>
+
+  <section id="game-screen" class="screen hidden">
+    <header class="game-header">
+      <div><div id="room-label" class="room-label"></div><div id="round-label" class="muted"></div></div>
+      <div class="header-actions"><button id="game-tutorial-btn" class="btn btn-secondary">❔</button><button id="leave-room-btn" class="btn btn-secondary">ออกจากห้อง</button><button id="start-round-btn" class="btn btn-primary hidden">เริ่มรอบใหม่</button></div>
+    </header>
+
+    <div class="phase-bar"><div id="phase-progress" class="phase-progress"></div><div id="phase-label" class="phase-label">กำลังรอ</div><div id="timer-label" class="timer-label"></div></div>
+    <div id="dealer-info" class="dealer-info"></div>
+
+    <div id="table-oval" class="table-oval"><div id="table-center" class="table-center"></div></div>
+
+    <div class="my-hand-section glass-card">
+      <div class="hand-heading"><div><h2>ไพ่ของคุณ</h2><p id="hand-hint" class="muted small">กดค้างที่ไพ่ 2 ใบแรกเพื่อดูไพ่</p></div><div id="my-score-chip" class="score-chip">แต้ม —</div></div>
+      <div id="my-hand" class="card-row"></div>
+      <p id="my-status" class="status-text"></p>
+
+      <div id="betting-section" class="betting-section hidden">
+        <div class="bet-head"><b>วางเดิมพัน</b><span id="my-balance-label"></span></div>
+        <div class="bet-quick-row"><button class="bet-quick btn btn-secondary" data-percent="25">25%</button><button class="bet-quick btn btn-secondary" data-percent="50">50%</button><button class="bet-quick btn btn-secondary" data-percent="100">MAX</button></div>
+        <div class="bet-slider-row"><input id="bet-slider" type="range" min="0" max="100" step="10" value="0" /><span id="bet-amount-display" class="bet-amount-display">฿0</span></div>
+        <button id="place-bet-btn" class="btn btn-primary btn-large">วางเดิมพัน</button>
+      </div>
+
+      <div id="action-buttons" class="action-buttons hidden">
+        <button id="draw-btn" class="btn btn-primary action-main">🃏 จั่วใบที่ 3</button>
+        <button id="stay-btn" class="btn btn-secondary action-main">✋ อยู่</button>
+      </div>
+      <div id="dealer-action-buttons" class="action-buttons hidden"><button id="dealer-draw-btn" class="btn btn-primary action-main">🃏 เจ้ามือจั่ว</button><button id="dealer-stay-btn" class="btn btn-secondary action-main">✋ เจ้ามืออยู่</button></div>
+      <div id="action-explanation" class="action-explanation"></div>
+    </div>
+  </section>
+
+  <div id="modal-layer" class="modal-layer hidden">
+    <div id="tutorial-choice-modal" class="modal-card tutorial-choice-card hidden">
+      <div class="tutorial-choice-icon">?</div>
+      <div class="eyebrow">WELCOME TO POK DENG ARENA</div>
+      <h2>ต้องการดูวิธีเล่นไหม?</h2>
+      <p class="muted">ดูแบบสั้น ๆ ได้ทุกเมื่อ หรือข้ามแล้วเริ่มเล่นได้ทันที</p>
+      <div class="tutorial-choice-actions">
+        <button id="tutorial-choice-skip" class="btn btn-secondary">ข้ามไปเล่น</button>
+        <button id="tutorial-choice-view" class="btn btn-primary">ดูวิธีเล่น</button>
+      </div>
+    </div>
+    <div id="tutorial-modal" class="modal-card hidden">
+      <div class="modal-header"><div><div class="eyebrow">QUICK GUIDE</div><h2 id="tutorial-title">วิธีเล่น</h2></div><button class="icon-btn modal-close">×</button></div>
+      <div id="tutorial-content" class="tutorial-content"></div>
+      <div class="tutorial-footer"><button id="tutorial-prev" class="btn btn-secondary">ย้อนกลับ</button><span id="tutorial-page"></span><button id="tutorial-next" class="btn btn-primary">ถัดไป</button></div>
+    </div>
+    <div id="leaderboard-modal" class="modal-card hidden">
+      <div class="modal-header"><div><div class="eyebrow">LEADERBOARD</div><h2>อันดับการแข่งขัน</h2></div><button class="icon-btn modal-close">×</button></div>
+      <div class="tabs"><button class="tab-btn is-active" data-tab="human">ผู้เล่น</button><button class="tab-btn" data-tab="dealer">Dealer Strategy</button></div><div id="human-period-tabs" class="tabs period-tabs"><button class="period-btn is-active" data-period="today">Today</button><button class="period-btn" data-period="weekly">Weekly</button><button class="period-btn" data-period="all">All-Time</button></div>
+      <div id="leaderboard-content"></div>
+    </div>
+    <div id="round-result-modal" class="modal-card round-result-modal hidden" role="dialog" aria-modal="true" aria-labelledby="round-result-title">
+      <div class="round-result-glow" aria-hidden="true"></div>
+      <div id="round-result-icon" class="round-result-icon">✓</div>
+      <div id="round-result-kicker" class="eyebrow">ROUND RESULT</div>
+      <h2 id="round-result-title" class="round-result-title">ชนะ!</h2>
+      <p id="round-result-subtitle" class="round-result-subtitle"></p>
+      <div id="round-result-details" class="round-result-details"></div>
+      <button id="round-result-close" class="btn btn-primary btn-large">ดำเนินการต่อ</button>
+    </div>
+  </div>
+
+  <div id="fx-layer" aria-hidden="true"></div>
+  <script src="js/socket.js"></script><script src="js/ui.js"></script><script src="js/main.js"></script>
+</body>
+</html>
